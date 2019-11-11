@@ -1,4 +1,4 @@
-package jonahshader
+package jonahshader.client
 
 import processing.core.PApplet
 
