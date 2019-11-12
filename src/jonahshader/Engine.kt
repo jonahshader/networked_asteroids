@@ -1,8 +1,8 @@
 package jonahshader
 
-import jonahshader.networking.AddAsteroid
-import jonahshader.networking.AddPlayer
-import jonahshader.networking.UpdatePlayer
+import jonahshader.networking.packets.AddAsteroid
+import jonahshader.networking.packets.AddPlayer
+import jonahshader.networking.packets.UpdatePlayer
 import processing.core.PApplet
 import kotlin.math.cos
 import kotlin.math.sin
@@ -28,7 +28,7 @@ class Asteroid(x: Float, y: Float, speed: Float, direction: Float, diameter: Flo
 }
 
 class Player(x: Float, y: Float, speed: Float, direction: Float, id: Int) :
-    MovingCircle(x, y, speed, direction, 6.0f, id) {
+    MovingCircle(x, y, speed, direction, 10.0f, id) {
     constructor(playerInfo: AddPlayer) : this(playerInfo.x, playerInfo.y, playerInfo.speed, playerInfo.direction, playerInfo.id)
     constructor(playerInfo: UpdatePlayer) : this(playerInfo.x, playerInfo.y, playerInfo.speed, playerInfo.direction, playerInfo.id)
 }
@@ -39,6 +39,7 @@ object Engine{
     val idToObject = HashMap<Int, NetworkedObject>()
     val asteroids = mutableListOf<Asteroid>()
     val players = mutableListOf<Player>()
+    var nextId = 0
 
     fun removeObject(id: Int, client: Boolean) {
         if (client) {
@@ -61,6 +62,7 @@ object Engine{
                 asteroids.add(obj)
             }
             idToObject[obj.id] = obj
+            nextId++
         }
 
     }
@@ -82,4 +84,5 @@ object Engine{
             idToObject[obj.id] = obj
         }
     }
+
 }

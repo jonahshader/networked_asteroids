@@ -9,6 +9,8 @@ import processing.core.PConstants.CENTER
 import kotlin.math.*
 
 class Game {
+    val playerAccelerationMultiplier = 60f
+
     init {
         GameClient(this).start()
     }
@@ -42,13 +44,13 @@ class Game {
         if (clientPlayer != null) {
             // Do player logic here
             val xKeyboard = (if (aPressed) -1 else 0) + (if (dPressed) 1 else 0)
-            val yKeyboard = (if (sPressed) -1 else 0) + (if (wPressed) 1 else 0)
+            val yKeyboard = -((if (sPressed) -1 else 0) + (if (wPressed) 1 else 0))
 
             if (xKeyboard != 0 || yKeyboard != 0) {
                 val xCurrSpeed = cos(clientPlayer!!.direction) * clientPlayer!!.speed
                 val yCurrSpeed = sin(clientPlayer!!.direction) * clientPlayer!!.speed
-                val xNewSpeed = xCurrSpeed + xKeyboard * dt
-                val yNewSpeed = yCurrSpeed + yKeyboard * dt
+                val xNewSpeed = xCurrSpeed + xKeyboard * dt * playerAccelerationMultiplier
+                val yNewSpeed = yCurrSpeed + yKeyboard * dt * playerAccelerationMultiplier
 
                 val newDirection = atan2(yNewSpeed, xNewSpeed)
                 val newMagnitude = sqrt(xNewSpeed.pow(2) + yNewSpeed.pow(2))
@@ -82,17 +84,25 @@ class Game {
         // Run asteroids
         for (asteroid in Engine.asteroids) {
             asteroid.run(dt)
+
+            // keep asteroid in bound
+            asteroid.x %= MainApp.screenWidth
+            asteroid.y %= MainApp.screenHeight
+
+            if (asteroid.x < 0) asteroid.x += MainApp.screenWidth
+            if (asteroid.y < 0) asteroid.y += MainApp.screenHeight
         }
     }
 
     fun draw(graphics: PApplet) {
+        graphics.background(0)
         // Draw asteroids
         for (asteroid in Engine.asteroids)
             drawAsteroid(asteroid, graphics)
 
         // Draw players
-        for (player in Engine.players)
-            drawPlayer(player, 0f, 0f, 255f, graphics)
+        for (i in Engine.players.indices)
+            drawPlayer(Engine.players[i], 0f, 0f, 255f, graphics)
 
         // Draw client player
         // TODO: currently draws over player that was in engine. fix that.

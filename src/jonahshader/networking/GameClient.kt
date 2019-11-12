@@ -7,6 +7,7 @@ import jonahshader.Asteroid
 import jonahshader.Engine
 import jonahshader.Player
 import jonahshader.client.Game
+import jonahshader.networking.packets.*
 import javax.swing.JFrame
 import javax.swing.JOptionPane
 import kotlin.concurrent.thread
@@ -17,6 +18,7 @@ class GameClient(val game: Game) {
     private val client = Client()
 
     fun start() {
+        registerPackets(client.kryo)
         client.start()
         client.connect(5000, JOptionPane.showInputDialog(JFrame(), "Enter IP:"), JOptionPane.showInputDialog(JFrame(), "Enter Port:").toInt())
 
@@ -53,7 +55,7 @@ class GameClient(val game: Game) {
 
     private fun updateLoop() {
         while (true) {
-            game.clientPlayer?.let{client.sendTCP(UpdatePlayer(game.clientPlayer!!))}
+            game.clientPlayer?.let{client.sendTCP(makeUpdatePlayerFromPlayer(game.clientPlayer!!))}
             Thread.sleep(updateInterval)
         }
     }
