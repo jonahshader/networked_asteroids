@@ -1,5 +1,8 @@
 package jonahshader
 
+import jonahshader.networking.AddAsteroid
+import jonahshader.networking.AddPlayer
+import jonahshader.networking.UpdatePlayer
 import processing.core.PApplet
 import kotlin.math.cos
 import kotlin.math.sin
@@ -8,7 +11,7 @@ open class NetworkedObject(val id: Int) {
     open fun run(dt: Float) {}
 }
 
-open class MovingCircle(var x: Float, var y: Float, private val speed: Float, val direction: Float, private val diameter: Float,
+open class MovingCircle(var x: Float, var y: Float, var speed: Float, var direction: Float, val diameter: Float,
                         id: Int
 ) : NetworkedObject(id) {
     override fun run(dt: Float) {
@@ -19,12 +22,15 @@ open class MovingCircle(var x: Float, var y: Float, private val speed: Float, va
     fun checkCollision(otherCircle: MovingCircle) : Boolean = (PApplet.dist(x, y, otherCircle.x, otherCircle.y) < ((diameter + otherCircle.diameter) / 2f))
 }
 
-class Asteroid(x: Float, y: Float, speed: Float, direction: Float, size: Float, id: Int) :
-    MovingCircle(x, y, speed, direction, size, id) {
+class Asteroid(x: Float, y: Float, speed: Float, direction: Float, diameter: Float, id: Int) :
+    MovingCircle(x, y, speed, direction, diameter, id) {
+    constructor(info: AddAsteroid) : this(info.x, info.y, info.speed, info.direction, info.diameter, info.id)
 }
 
 class Player(x: Float, y: Float, speed: Float, direction: Float, id: Int) :
     MovingCircle(x, y, speed, direction, 6.0f, id) {
+    constructor(playerInfo: AddPlayer) : this(playerInfo.x, playerInfo.y, playerInfo.speed, playerInfo.direction, playerInfo.id)
+    constructor(playerInfo: UpdatePlayer) : this(playerInfo.x, playerInfo.y, playerInfo.speed, playerInfo.direction, playerInfo.id)
 }
 
 

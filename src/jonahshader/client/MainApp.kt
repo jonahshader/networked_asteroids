@@ -3,6 +3,9 @@ package jonahshader.client
 import processing.core.PApplet
 
 class MainApp : PApplet() {
+    val screenWidth = 640
+    val screenHeight = 480
+
     var screen: Screen? = MainMenu()
     var deltaTime = 1/60.0f
     var previousTimeNanos = System.nanoTime()
