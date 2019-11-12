@@ -8,7 +8,7 @@ open class NetworkedObject(val id: Int) {
     open fun run(dt: Float) {}
 }
 
-open class MovingCircle(var x: Float, var y: Float, private val speed: Float, private val direction: Float, private val diameter: Float,
+open class MovingCircle(var x: Float, var y: Float, private val speed: Float, val direction: Float, private val diameter: Float,
                         id: Int
 ) : NetworkedObject(id) {
     override fun run(dt: Float) {
@@ -29,7 +29,7 @@ class Player(x: Float, y: Float, speed: Float, direction: Float, id: Int) :
 
 
 
-class Engine{
+object Engine{
     val idToObject = HashMap<Int, NetworkedObject>()
     val asteroids = mutableListOf<Asteroid>()
     val players = mutableListOf<Player>()
@@ -47,7 +47,7 @@ class Engine{
 
     fun addObject(obj: NetworkedObject, client: Boolean) {
         if (client) {
-
+            // send request to server (from client)
         } else {
             if (obj is Player) {
                 players.add(obj)
@@ -61,7 +61,7 @@ class Engine{
 
     fun replaceObject(obj: NetworkedObject, client: Boolean) {
         if (client) {
-
+            // send request to server (from client)
         } else {
             val objToReplace = idToObject[obj.id]
 
