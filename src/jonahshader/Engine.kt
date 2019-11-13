@@ -4,11 +4,13 @@ import jonahshader.gameparts.Asteroid
 import jonahshader.gameparts.NetworkedObject
 import jonahshader.gameparts.Player
 import jonahshader.networking.packets.UpdatePlayer
+import java.util.*
+import kotlin.collections.HashMap
 
 object Engine{
     private val idToObject = HashMap<Int, NetworkedObject>()
-    val asteroids = mutableListOf<Asteroid>()
-    val players = mutableListOf<Player>()
+    val asteroids = Vector<Asteroid>()
+    val players = Vector<Player>()
     var nextId = 0
 
     //TODO: make removeObject mark an object for removable (via a flag iin NetworkedObject) and then remove them all at once with removeIf()
