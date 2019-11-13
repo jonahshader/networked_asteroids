@@ -4,8 +4,8 @@ import processing.core.PApplet
 
 class MainApp : PApplet() {
     companion object {
-        val screenWidth = 1280
-        val screenHeight = 720
+        val screenWidth = 1280 / 2
+        val screenHeight = 720 / 2
     }
 
 
