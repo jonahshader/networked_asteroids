@@ -4,8 +4,8 @@ import processing.core.PApplet
 
 class MainApp : PApplet() {
     companion object {
-        val screenWidth = 640
-        val screenHeight = 480
+        val screenWidth = 1280
+        val screenHeight = 720
     }
 
 
@@ -18,11 +18,16 @@ class MainApp : PApplet() {
     }
 
     override fun setup() {
+        surface.setResizable(true)
         frameRate(165f)
         background(0)
     }
 
     override fun draw() {
+        val xScale = screenWidth / width.toFloat()
+        val yScale = screenHeight / height.toFloat()
+        scale(1/max(xScale, yScale))
+
         screen?.draw(deltaTime, this)
 
         val currentTime = System.nanoTime()

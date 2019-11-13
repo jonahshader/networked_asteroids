@@ -3,15 +3,12 @@ package jonahshader.networking
 import com.esotericsoftware.kryonet.Connection
 import com.esotericsoftware.kryonet.Listener
 import com.esotericsoftware.kryonet.Server
-import jonahshader.Asteroid
 import jonahshader.Engine
-import jonahshader.NetworkedObject
-import jonahshader.Player
+import jonahshader.gameparts.Player
 import jonahshader.client.MainApp
 import jonahshader.networking.packets.AddPlayer
 import jonahshader.networking.packets.NewConnection
 import jonahshader.networking.packets.UpdatePlayer
-import java.lang.Math.PI
 import java.lang.Math.random
 import javax.swing.JFrame
 import javax.swing.JOptionPane
@@ -33,21 +30,20 @@ class GameServer {
                         // create new player
                         val newX = MainApp.screenWidth * random().toFloat()
                         val newY = MainApp.screenHeight * random().toFloat()
-                        val newSpeed = 0f
-                        val newDirection = 0f
 
                         // send new player to clients. only the caller gets ownership.
-                        server.sendToAllExceptTCP(connection!!.id, AddPlayer(newX, newY, newSpeed, newDirection, Engine.nextId, false))
-                        connection.sendTCP(AddPlayer(newX, newY, newSpeed, newDirection, Engine.nextId, true))
+                        val playerInfoNotForClient = AddPlayer(newX, newY, 0f, 0f, 0f, Engine.nextId, false, false)
+                        val playerInfoForClient = AddPlayer(newX, newY, 0f, 0f, 0f, Engine.nextId, false, true)
+                        server.sendToAllExceptTCP(connection!!.id, playerInfoNotForClient)
+                        connection.sendTCP(playerInfoForClient)
 
-                        val newPlayerInfo = AddPlayer(newX, newY, newSpeed, newDirection, Engine.nextId, false)
                         // add new player to engine
-                        createNewPlayer(newPlayerInfo)
+                        createNewPlayer(playerInfoNotForClient)
 
                         // send all players
                         for (player in Engine.players) {
                             // if this player isn't the new one we just created for the new client,
-                            if (player.id != newPlayerInfo.id) {
+                            if (player.id != playerInfoNotForClient.id) {
                                 // send it
                                 connection.sendTCP(makeAddPlayerFromPlayer(player))
                             }
@@ -60,7 +56,7 @@ class GameServer {
                     }
 
                     is UpdatePlayer -> {
-                        Engine.replaceObject(Player(`object`), false)
+                        Engine.replaceObject(Player(`object`))
                         server.sendToAllTCP(`object`)
                     }
                 }
@@ -70,7 +66,7 @@ class GameServer {
 
     private fun createNewPlayer(playerInfo: AddPlayer) : Player {
         val newPlayer = Player(playerInfo)
-        Engine.addObject(newPlayer, false)
+        Engine.addObject(newPlayer)
         return newPlayer
     }
 }

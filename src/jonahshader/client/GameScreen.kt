@@ -6,7 +6,7 @@ class GameScreen : Screen {
     private val game = Game()
 
     override fun draw(dt: Float, graphics: PApplet) {
-        game.run(dt, graphics)
+        game.run(dt)
         game.draw(graphics)
     }
 

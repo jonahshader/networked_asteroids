@@ -1,90 +1,62 @@
 package jonahshader
 
-import jonahshader.networking.packets.AddAsteroid
-import jonahshader.networking.packets.AddPlayer
+import jonahshader.gameparts.Asteroid
+import jonahshader.gameparts.NetworkedObject
+import jonahshader.gameparts.Player
 import jonahshader.networking.packets.UpdatePlayer
-import processing.core.PApplet
-import kotlin.math.cos
-import kotlin.math.sin
-
-open class NetworkedObject(val id: Int) {
-    open fun run(dt: Float) {}
-}
-
-open class MovingCircle(var x: Float, var y: Float, var speed: Float, var direction: Float, val diameter: Float,
-                        id: Int
-) : NetworkedObject(id) {
-    override fun run(dt: Float) {
-        x += speed * dt * cos(direction)
-        y += speed * dt * sin(direction)
-    }
-
-    fun checkCollision(otherCircle: MovingCircle) : Boolean = (PApplet.dist(x, y, otherCircle.x, otherCircle.y) < ((diameter + otherCircle.diameter) / 2f))
-}
-
-class Asteroid(x: Float, y: Float, speed: Float, direction: Float, diameter: Float, id: Int) :
-    MovingCircle(x, y, speed, direction, diameter, id) {
-    constructor(info: AddAsteroid) : this(info.x, info.y, info.speed, info.direction, info.diameter, info.id)
-}
-
-class Player(x: Float, y: Float, speed: Float, direction: Float, id: Int) :
-    MovingCircle(x, y, speed, direction, 10.0f, id) {
-    constructor(playerInfo: AddPlayer) : this(playerInfo.x, playerInfo.y, playerInfo.speed, playerInfo.direction, playerInfo.id)
-    constructor(playerInfo: UpdatePlayer) : this(playerInfo.x, playerInfo.y, playerInfo.speed, playerInfo.direction, playerInfo.id)
-}
-
-
 
 object Engine{
-    val idToObject = HashMap<Int, NetworkedObject>()
+    private val idToObject = HashMap<Int, NetworkedObject>()
     val asteroids = mutableListOf<Asteroid>()
     val players = mutableListOf<Player>()
     var nextId = 0
 
-    fun removeObject(id: Int, client: Boolean) {
-        if (client) {
+    //TODO: make removeObject mark an object for removable (via a flag iin NetworkedObject) and then remove them all at once with removeIf()
+    //TODO: also do the inverse by making addObject go into a queue before
+    //TODO: add an atomic boolean that indicates whether engine is busy or not.
+    // busy as in GameClient is currently modifying it.
+    // when its not busy, set the flag to false which will allow Game to access it
 
-        } else {
-            val objToRemove = idToObject[id]
-            asteroids.remove(objToRemove)
-            players.remove(objToRemove)
-            idToObject.remove(id)
-        }
+    //TODO: instead of calling removeIf immediately after removeObject call, make Game call it right before iterating over
+    // the objects. same with the add queue.
+
+    fun removeObject(id: Int) {
+        val objToRemove = idToObject[id]
+        asteroids.remove(objToRemove)
+        players.remove(objToRemove)
+        idToObject.remove(id)
     }
 
-    fun addObject(obj: NetworkedObject, client: Boolean) {
-        if (client) {
-            // send request to server (from client)
-        } else {
-            if (obj is Player) {
-                players.add(obj)
-            } else if (obj is Asteroid) {
-                asteroids.add(obj)
-            }
-            idToObject[obj.id] = obj
-            nextId++
+    fun addObject(obj: NetworkedObject) {
+        if (obj is Player) {
+            players.add(obj)
+        } else if (obj is Asteroid) {
+            asteroids.add(obj)
         }
-
+        idToObject[obj.id] = obj
+        nextId++
     }
 
-    fun replaceObject(obj: NetworkedObject, client: Boolean) {
-        if (client) {
-            // send request to server (from client)
-        } else {
-            val objToReplace = idToObject[obj.id]
+    fun updatePlayer(playerInfo: UpdatePlayer) {
+        val objToUpdate = idToObject[playerInfo.id]
+        val indexToUpdate = players.indexOf(objToUpdate)
+        if (indexToUpdate >= 0)
+            players[indexToUpdate].updatePlayer(playerInfo)
+    }
 
-            if (obj is Player) {
-                players[players.indexOf(objToReplace)] = obj
-//                players.remove(objToReplace)
-//                players.add(obj)
-            } else if (obj is Asteroid) {
+    fun replaceObject(obj: NetworkedObject) {
+        val objToReplace = idToObject[obj.id]
+
+        if (obj is Player) {
+            val indexToReplace = players.indexOf(objToReplace)
+            if (indexToReplace >= 0)
+                players[indexToReplace] = obj
+        } else if (obj is Asteroid) {
+            val indexToReplace = asteroids.indexOf(objToReplace)
+            if (indexToReplace >= 0)
                 asteroids[asteroids.indexOf(objToReplace)] = obj
-//                asteroids.remove(objToReplace)
-//                asteroids.add(obj)
-            }
-
-            idToObject[obj.id] = obj
         }
-    }
 
+        idToObject[obj.id] = obj
+    }
 }

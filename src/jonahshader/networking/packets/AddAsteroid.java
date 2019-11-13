@@ -1,14 +1,14 @@
 package jonahshader.networking.packets;
 
 public class AddAsteroid {
-    public float x, y, speed, direction, diameter;
+    public float x, y, xSpeed, direction, diameter;
     public int id;
 
-    public AddAsteroid(float x, float y, float speed, float direction, float diameter, int id) {
+    public AddAsteroid(float x, float y, float xSpeed, float ySpeed, float diameter, int id) {
         this.x = x;
         this.y = y;
-        this.speed = speed;
-        this.direction = direction;
+        this.xSpeed = xSpeed;
+        this.direction = ySpeed;
         this.diameter = diameter;
         this.id = id;
     }
