@@ -17,19 +17,14 @@ import javax.swing.JFrame
 import javax.swing.JOptionPane
 
 class GameServer {
-    private val server = Server()
+    val server = Server()
+    val playersConnected: Int
+    get() = server.connections.size
 
     fun start() {
         registerPackets(server.kryo)
         server.start()
         server.bind(JOptionPane.showInputDialog(JFrame(), "Enter Port:").toInt())
-
-        // spawn some asteroids for testing
-        for (i in 0..10) {
-            val newAsteroid = Asteroid(MainApp.screenWidth * random().toFloat(), MainApp.screenHeight * random().toFloat(),
-                (random() * 30f).toFloat() + 25f, (random() * PI * 2).toFloat(), 16f, Engine.nextId)
-            Engine.addObject(newAsteroid, false)
-        }
 
         server.addListener(object : Listener() {
             override fun received(connection: Connection?, `object`: Any?) {
@@ -68,8 +63,6 @@ class GameServer {
                         Engine.replaceObject(Player(`object`), false)
                         server.sendToAllTCP(`object`)
                     }
-
-
                 }
             }
         })

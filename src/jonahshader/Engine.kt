@@ -74,11 +74,13 @@ object Engine{
             val objToReplace = idToObject[obj.id]
 
             if (obj is Player) {
-                players.remove(objToReplace)
-                players.add(obj)
+                players[players.indexOf(objToReplace)] = obj
+//                players.remove(objToReplace)
+//                players.add(obj)
             } else if (obj is Asteroid) {
-                asteroids.remove(objToReplace)
-                asteroids.add(obj)
+                asteroids[asteroids.indexOf(objToReplace)] = obj
+//                asteroids.remove(objToReplace)
+//                asteroids.add(obj)
             }
 
             idToObject[obj.id] = obj

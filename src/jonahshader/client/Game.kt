@@ -71,7 +71,8 @@ class Game {
         }
 
         // Run players
-        for (player in Engine.players) {
+        for (i in Engine.players.indices) {
+            val player = Engine.players[i]
             if (clientPlayer != null) {
                 if (player.id != clientPlayer!!.id) {
                     player.run(dt)
@@ -82,7 +83,8 @@ class Game {
         }
 
         // Run asteroids
-        for (asteroid in Engine.asteroids) {
+        for (i in Engine.asteroids.indices) {
+            val asteroid = Engine.asteroids[i]
             asteroid.run(dt)
 
             // keep asteroid in bound
@@ -97,8 +99,8 @@ class Game {
     fun draw(graphics: PApplet) {
         graphics.background(0)
         // Draw asteroids
-        for (asteroid in Engine.asteroids)
-            drawAsteroid(asteroid, graphics)
+        for (i in Engine.asteroids.indices)
+            drawAsteroid(Engine.asteroids[i], graphics)
 
         // Draw players
         for (i in Engine.players.indices)
