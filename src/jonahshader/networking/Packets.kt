@@ -16,4 +16,5 @@ fun registerPackets(kryo: Kryo) {
     kryo.register(AddPlayer::class.java)
     kryo.register(AddAsteroid::class.java)
     kryo.register(RequestCreateProjectile::class.java)
+    kryo.register(ProjectileIDReply::class.java)
 }

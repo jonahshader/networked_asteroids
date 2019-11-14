@@ -4,16 +4,31 @@ import jonahshader.Engine
 import jonahshader.gameparts.Player
 import jonahshader.gameparts.LocalProjectile
 import jonahshader.networking.GameClient
+import jonahshader.networking.packets.RequestCreateProjectile
 import processing.core.PApplet
 import java.util.*
 
 class Game {
+    private val gameClient = GameClient(this)
+
     init {
-        GameClient(this).start()
+        gameClient.start()
     }
 
     var clientPlayer: Player? = null
     val clientProjectiles = Vector<LocalProjectile>()
+
+    var nextProjectileId = 0;
+
+    /*
+    on creation of a local projectile, store it in Game, tell client to tell server to create a new projectile for
+    everyone else. server will reply to just this client with a ProjectileID, which will give the projectile id and server ip.
+    server will send CreateProjectile to everyone else. if LocalProjectile wants to remove itself, it will all itself to the removal queue
+    so that game can attempt to retrieve the global id and use it to send a request to server to remove it.
+    after it successfully sends that, it can remove the local copy.
+
+    nvm about the removal queue. just mark it for removal with a boolean
+     */
 
     var wPressed = false
     var aPressed = false
@@ -32,9 +47,9 @@ class Game {
                     // if clientPlayer exists,
                     if (clientPlayer != null) {
                         // create a local projectile in clientProjectiles
-
+                        clientProjectiles.add(LocalProjectile(clientPlayer!!.x, clientPlayer!!.y, clientPlayer!!.direction, nextProjectileId, -1))
                         // also send a request to create one on the server so that other clients can see it
-
+                        gameClient.client.sendTCP(RequestCreateProjectile(clientPlayer!!.x, clientPlayer!!.y, clientPlayer!!.direction, nextProjectileId))
                     }
                 }
             }

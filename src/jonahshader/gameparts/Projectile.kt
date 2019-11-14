@@ -22,7 +22,7 @@ open class Projectile(var x: Float, var y: Float, var direction: Float, id: Int)
         yEnd = y + ySpeedScale * length
     }
 
-    fun draw(graphics: PApplet) {
+    open fun draw(graphics: PApplet) {
         graphics.stroke(255f)
         graphics.strokeWeight(1f)
         graphics.line(x, y, xEnd, yEnd)

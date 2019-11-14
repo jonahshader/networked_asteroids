@@ -3,6 +3,7 @@ package jonahshader
 import jonahshader.gameparts.Asteroid
 import jonahshader.gameparts.NetworkedObject
 import jonahshader.gameparts.Player
+import jonahshader.gameparts.Projectile
 import jonahshader.networking.packets.UpdatePlayer
 import java.util.*
 import kotlin.collections.HashMap
@@ -11,9 +12,10 @@ object Engine{
     private val idToObject = HashMap<Int, NetworkedObject>()
     val asteroids = Vector<Asteroid>()
     val players = Vector<Player>()
+    val projectiles = Vector<Projectile>()
 
-    val objAddQueue = Vector<NetworkedObject>()
-    val objRemoveQueue = Vector<NetworkedObject>()
+    private val objAddQueue = Vector<NetworkedObject>()
+    private val objRemoveQueue = Vector<NetworkedObject>()
 
     var nextId = 0
 
@@ -29,10 +31,10 @@ object Engine{
 
     // for server only
     fun addObject(obj: NetworkedObject) {
-        if (obj is Player) {
-            players.add(obj)
-        } else if (obj is Asteroid) {
-            asteroids.add(obj)
+        when (obj) {
+            is Player -> players.add(obj)
+            is Asteroid -> asteroids.add(obj)
+            is Projectile -> projectiles.add(obj)
         }
         idToObject[obj.id] = obj
         nextId++
@@ -43,6 +45,7 @@ object Engine{
         val objToRemove = idToObject[id]
         players.remove(objToRemove)
         asteroids.remove(objToRemove)
+        projectiles.remove(objToRemove)
         idToObject.remove(id)
     }
 
@@ -56,28 +59,36 @@ object Engine{
     fun replaceObject(obj: NetworkedObject) {
         val objToReplace = idToObject[obj.id]
 
-        if (obj is Player) {
-            val indexToReplace = players.indexOf(objToReplace)
-            if (indexToReplace >= 0)
-                players[indexToReplace] = obj
-        } else if (obj is Asteroid) {
-            val indexToReplace = asteroids.indexOf(objToReplace)
-            if (indexToReplace >= 0)
-                asteroids[asteroids.indexOf(objToReplace)] = obj
+        when (obj) {
+            is Player -> {
+                val indexToReplace = players.indexOf(objToReplace)
+                if (indexToReplace >= 0)
+                    players[indexToReplace] = obj
+            }
+            is Asteroid -> {
+                val indexToReplace = asteroids.indexOf(objToReplace)
+                if (indexToReplace >= 0)
+                    asteroids[indexToReplace] = obj
+            }
+            is Projectile -> {
+                val indexToReplace = projectiles.indexOf(objToReplace)
+                if (indexToReplace >= 0)
+                    projectiles[indexToReplace] = obj
+            }
         }
 
         idToObject[obj.id] = obj
     }
 
     /**
-     * should be called by Game before the engine is used
+     * should be called by Game before the engine is used. updates the add and remove queues
      */
     fun updateEngine() {
         for (obj in objAddQueue) {
-            if (obj is Player) {
-                players.add(obj)
-            } else if (obj is Asteroid) {
-                asteroids.add(obj)
+            when (obj) {
+                is Player -> players.add(obj)
+                is Asteroid -> asteroids.add(obj)
+                is Projectile -> projectiles.add(obj)
             }
             idToObject[obj.id] = obj
         }
@@ -86,6 +97,7 @@ object Engine{
         for (obj in objRemoveQueue) {
             asteroids.remove(obj)
             players.remove(obj)
+            projectiles.remove(obj)
             idToObject.remove(obj.id)
         }
         objRemoveQueue.clear()

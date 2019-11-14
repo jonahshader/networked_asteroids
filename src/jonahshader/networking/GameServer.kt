@@ -6,9 +6,8 @@ import com.esotericsoftware.kryonet.Server
 import jonahshader.Engine
 import jonahshader.gameparts.Player
 import jonahshader.client.MainApp
-import jonahshader.networking.packets.AddPlayer
-import jonahshader.networking.packets.NewConnection
-import jonahshader.networking.packets.UpdatePlayer
+import jonahshader.gameparts.Projectile
+import jonahshader.networking.packets.*
 import java.lang.Math.random
 import javax.swing.JFrame
 import javax.swing.JOptionPane
@@ -56,8 +55,18 @@ class GameServer {
                     }
 
                     is UpdatePlayer -> {
-                        Engine.replaceObject(Player(`object`))
+                        Engine.updatePlayer(`object`)
                         server.sendToAllTCP(`object`)
+                    }
+
+                    is RequestCreateProjectile -> {
+                        // send ProjectileIDReply to the client that sent this packet
+                        val id = Engine.nextId
+                        connection!!.sendTCP(ProjectileIDReply(id, `object`.localId))
+                        server.sendToAllExceptTCP(connection.id,
+                            AddProjectile(`object`.x, `object`.y, `object`.direction, id)
+                        )
+                        Engine.addObject(Projectile(`object`.x, `object`.y, `object`.direction, id))
                     }
                 }
             }

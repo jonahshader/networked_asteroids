@@ -7,6 +7,7 @@ import jonahshader.gameparts.Asteroid
 import jonahshader.Engine
 import jonahshader.gameparts.Player
 import jonahshader.client.Game
+import jonahshader.gameparts.Projectile
 import jonahshader.networking.packets.*
 import javax.swing.JFrame
 import javax.swing.JOptionPane
@@ -15,7 +16,7 @@ import kotlin.concurrent.thread
 class GameClient(val game: Game) {
     private val updateInterval = ((1/30f) * 1000).toLong() // loop time for client to server update loop
 
-    private val client = Client() // kryonet client network component
+    val client = Client() // kryonet client network component
 
     fun start() {
         registerPackets(client.kryo)
@@ -33,16 +34,17 @@ class GameClient(val game: Game) {
                         }
                         Engine.queueAddObject(newPlayer)
                     }
-                    is UpdatePlayer -> {
-//                        val player = Player(`object`)
-//                        if (`object`.id == game.clientPlayer?.id ?: -2) {
-//                            game.clientPlayer = player
-//                        }
-//                        Engine.replaceObject(player)
-                        Engine.updatePlayer(`object`)
-                    }
+                    is UpdatePlayer -> Engine.updatePlayer(`object`)
                     is AddAsteroid -> Engine.queueAddObject(Asteroid(`object`))
                     is RemoveObject -> Engine.queueRemoveObject(`object`.id)
+                    is ProjectileIDReply -> {
+                        for (localp in game.clientProjectiles) {
+                            if (localp.localId == `object`.localId)
+                                localp.id = `object`.id
+                        }
+                        game.localIdToId[`object`.localId] = `object`.id
+                    }
+                    is AddProjectile -> Engine.queueAddObject(Projectile(`object`.x, `object`.y, `object`.direction, `object`.id))
                 }
             }
         })

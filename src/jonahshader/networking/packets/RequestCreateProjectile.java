@@ -5,13 +5,13 @@ package jonahshader.networking.packets;
  */
 public class RequestCreateProjectile {
     public float x, y, direction;
-    public int ownerId;
+    public int localId;
 
-    public RequestCreateProjectile(float x, float y, float direction, int ownerId) {
+    public RequestCreateProjectile(float x, float y, float direction, int localId) {
         this.x = x;
         this.y = y;
         this.direction = direction;
-        this.ownerId = ownerId;
+        this.localId = localId;
     }
 
     public RequestCreateProjectile() {}

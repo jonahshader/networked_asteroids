@@ -4,10 +4,34 @@ import jonahshader.Engine
 import jonahshader.client.Game
 import jonahshader.client.MainApp
 import jonahshader.networking.GameServer
+import processing.core.PApplet
+import processing.core.PGraphics
 import kotlin.math.cos
 import kotlin.math.sin
 
-class LocalProjectile(x: Float, y: Float, direction: Float, val ownerId: Int, id: Int) : Projectile(x, y, direction, id) {
+/**
+ * local projectile performs collision detection and only runs on clients
+ */
+class LocalProjectile(x: Float, y: Float, direction: Float, val localId: Int, id: Int) : Projectile(x, y, direction, id) {
+    var markedForRemoval = false
+
+    override fun run(dt: Float) {
+        if (!markedForRemoval) {
+            super.run(dt)
+
+            val asteroidCollided = getCollision()
+            if (asteroidCollided != null) {
+                // report collision
+                // note: id is incorrect because this was created locally.
+                markedForRemoval = true
+            }
+        }
+    }
+
+    override fun draw(graphics: PApplet) {
+        if (!markedForRemoval)
+            super.draw(graphics)
+    }
 
     // checks collision with asteroids
     private fun getCollision() : Asteroid? {
