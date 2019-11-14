@@ -1,5 +1,8 @@
 package jonahshader.networking.packets;
 
+/**
+ * server to client, telling the client to create a projectile
+ */
 public class CreateProjectile {
     public int id, ownerId;
     public float x, y, direction;

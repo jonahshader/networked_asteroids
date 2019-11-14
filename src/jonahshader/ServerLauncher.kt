@@ -48,6 +48,6 @@ fun spawnRandomAsteroid(server: Server) {
         MainApp.screenWidth * random().toFloat(), MainApp.screenHeight * random().toFloat(),
         (random() * 30f).toFloat() + 25f, (random() * Math.PI * 2).toFloat(), 16f, Engine.nextId
     )
-    Engine.addObject(newAsteroid)
+    Engine.queueAddObject(newAsteroid)
     server.sendToAllTCP(makeAddAsteroidFromAsteroid(newAsteroid))
 }

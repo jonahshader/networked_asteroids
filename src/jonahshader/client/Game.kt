@@ -3,9 +3,11 @@ package jonahshader.client
 import jonahshader.gameparts.Asteroid
 import jonahshader.Engine
 import jonahshader.gameparts.Player
+import jonahshader.gameparts.Projectile
 import jonahshader.networking.GameClient
 import processing.core.PApplet
 import processing.core.PConstants.CENTER
+import java.util.*
 import kotlin.math.*
 
 class Game {
@@ -14,6 +16,7 @@ class Game {
     }
 
     var clientPlayer: Player? = null
+    val clientProjectiles = Vector<Projectile>()
 
     var wPressed = false
     var aPressed = false
@@ -26,7 +29,18 @@ class Game {
             'a' -> aPressed = true
             's' -> sPressed = true
             'd' -> dPressed = true
-//            ' ' ->
+            ' ' -> {
+                // limit the number of projectiles that can be created
+                if (clientProjectiles.size < 3) {
+                    // if clientPlayer exists,
+                    if (clientPlayer != null) {
+                        // create a local projectile in clientProjectiles
+
+                        // also send a request to create one on the server so that other clients can see it
+
+                    }
+                }
+            }
         }
     }
 
@@ -40,6 +54,7 @@ class Game {
     }
 
     fun run(dt: Float) {
+        Engine.updateEngine()
         if (clientPlayer != null) {
             // Do client player movement logic
             val xKeyboard = (if (aPressed) -1 else 0) + (if (dPressed) 1 else 0)

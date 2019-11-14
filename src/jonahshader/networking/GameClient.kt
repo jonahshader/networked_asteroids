@@ -31,7 +31,7 @@ class GameClient(val game: Game) {
                         if (`object`.owner) {
                             game.clientPlayer = newPlayer
                         }
-                        Engine.addObject(newPlayer)
+                        Engine.queueAddObject(newPlayer)
                     }
                     is UpdatePlayer -> {
 //                        val player = Player(`object`)
@@ -41,8 +41,8 @@ class GameClient(val game: Game) {
 //                        Engine.replaceObject(player)
                         Engine.updatePlayer(`object`)
                     }
-                    is AddAsteroid -> Engine.addObject(Asteroid(`object`))
-                    is RemoveObject -> Engine.removeObject(`object`.id)
+                    is AddAsteroid -> Engine.queueAddObject(Asteroid(`object`))
+                    is RemoveObject -> Engine.queueRemoveObject(`object`.id)
                 }
             }
         })

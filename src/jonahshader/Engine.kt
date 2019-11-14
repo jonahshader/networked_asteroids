@@ -11,24 +11,23 @@ object Engine{
     private val idToObject = HashMap<Int, NetworkedObject>()
     val asteroids = Vector<Asteroid>()
     val players = Vector<Player>()
+
+    val objAddQueue = Vector<NetworkedObject>()
+    val objRemoveQueue = Vector<NetworkedObject>()
+
     var nextId = 0
 
-    //TODO: make removeObject mark an object for removable (via a flag iin NetworkedObject) and then remove them all at once with removeIf()
-    //TODO: also do the inverse by making addObject go into a queue before
-    //TODO: add an atomic boolean that indicates whether engine is busy or not.
-    // busy as in GameClient is currently modifying it.
-    // when its not busy, set the flag to false which will allow Game to access it
-
-    //TODO: instead of calling removeIf immediately after removeObject call, make Game call it right before iterating over
-    // the objects. same with the add queue.
-
-    fun removeObject(id: Int) {
+    fun queueRemoveObject(id: Int) {
         val objToRemove = idToObject[id]
-        asteroids.remove(objToRemove)
-        players.remove(objToRemove)
-        idToObject.remove(id)
+        objRemoveQueue.add(objToRemove)
     }
 
+    fun queueAddObject(obj: NetworkedObject) {
+        objAddQueue.add(obj)
+        nextId++
+    }
+
+    // for server only
     fun addObject(obj: NetworkedObject) {
         if (obj is Player) {
             players.add(obj)
@@ -37,6 +36,14 @@ object Engine{
         }
         idToObject[obj.id] = obj
         nextId++
+    }
+
+    // for server only
+    fun removeObject(id: Int) {
+        val objToRemove = idToObject[id]
+        players.remove(objToRemove)
+        asteroids.remove(objToRemove)
+        idToObject.remove(id)
     }
 
     fun updatePlayer(playerInfo: UpdatePlayer) {
@@ -60,5 +67,27 @@ object Engine{
         }
 
         idToObject[obj.id] = obj
+    }
+
+    /**
+     * should be called by Game before the engine is used
+     */
+    fun updateEngine() {
+        for (obj in objAddQueue) {
+            if (obj is Player) {
+                players.add(obj)
+            } else if (obj is Asteroid) {
+                asteroids.add(obj)
+            }
+            idToObject[obj.id] = obj
+        }
+        objAddQueue.clear()
+
+        for (obj in objRemoveQueue) {
+            asteroids.remove(obj)
+            players.remove(obj)
+            idToObject.remove(obj.id)
+        }
+        objRemoveQueue.clear()
     }
 }

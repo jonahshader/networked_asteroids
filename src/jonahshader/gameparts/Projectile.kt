@@ -1,10 +1,13 @@
 package jonahshader.gameparts
 
 import jonahshader.Engine
+import jonahshader.client.Game
+import jonahshader.client.MainApp
+import jonahshader.networking.GameServer
 import kotlin.math.cos
 import kotlin.math.sin
 
-class Projectile(var x: Float, var y: Float, var direction: Float, ownerId: Int, id: Int) {
+class Projectile(var x: Float, var y: Float, var direction: Float, val ownerId: Int, val id: Int) {
     private val speed = 20f
     private val length = 8f
 
@@ -13,6 +16,8 @@ class Projectile(var x: Float, var y: Float, var direction: Float, ownerId: Int,
 
     private var xEnd = x + xSpeedScale * length
     private var yEnd = y + ySpeedScale * length
+
+    private var markedForRemoval = false
 
     fun run(dt: Float, client: Boolean) {
         x += xSpeedScale * speed * dt
@@ -25,11 +30,29 @@ class Projectile(var x: Float, var y: Float, var direction: Float, ownerId: Int,
         if (client) {
             val asteroidCollided = getCollision()
             if (asteroidCollided != null) {
-
+                // report collision to server
             }
         }
 
-        TODO("make projectile despawn when off screen + make player limit how many projectiles can be spawned")
+        if (x >= MainApp.screenWidth || x < 0 || y >= MainApp.screenHeight || y < 0) {
+            if (client) {
+                markedForRemoval = true // client uses this to remove local copies
+            } else {
+                Engine.queueRemoveObject(id)
+            }
+        }
+    }
+
+    fun run(dt: Float, game: Game) {
+
+    }
+
+    fun run (dt: Float, gameServer: GameServer) {
+
+    }
+
+    private fun runCommon() {
+
     }
 
     // checks collision with asteroids
