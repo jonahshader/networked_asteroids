@@ -1,14 +1,11 @@
 package jonahshader.client
 
-import jonahshader.gameparts.Asteroid
 import jonahshader.Engine
 import jonahshader.gameparts.Player
-import jonahshader.gameparts.Projectile
+import jonahshader.gameparts.LocalProjectile
 import jonahshader.networking.GameClient
 import processing.core.PApplet
-import processing.core.PConstants.CENTER
 import java.util.*
-import kotlin.math.*
 
 class Game {
     init {
@@ -16,7 +13,7 @@ class Game {
     }
 
     var clientPlayer: Player? = null
-    val clientProjectiles = Vector<Projectile>()
+    val clientProjectiles = Vector<LocalProjectile>()
 
     var wPressed = false
     var aPressed = false
