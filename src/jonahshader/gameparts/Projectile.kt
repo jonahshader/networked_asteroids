@@ -7,6 +7,7 @@ import kotlin.math.sin
 open class Projectile(var x: Float, var y: Float, var baseXSpeed: Float, var baseYSpeed: Float, var direction: Float, id: Int) : NetworkedObject(id) {
     private val speed = 210f // pixels per second
     val length = 14f // pixels
+    var lifespan = 5f // exist for 5 seconds max
 
     private val xSpeedScale = cos(direction)
     private val ySpeedScale = sin(direction)
@@ -20,7 +21,11 @@ open class Projectile(var x: Float, var y: Float, var baseXSpeed: Float, var bas
 
         xEnd = x + xSpeedScale * length
         yEnd = y + ySpeedScale * length
+
+        lifespan -= dt
     }
+
+    open fun alive() : Boolean = lifespan > 0
 
     open fun draw(graphics: PApplet) {
         graphics.stroke(255f)

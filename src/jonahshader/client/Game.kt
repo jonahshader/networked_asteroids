@@ -25,22 +25,12 @@ class Game {
     var clientPlayer: Player? = null
     val clientProjectiles = Vector<LocalProjectile>()
 
-    var nextProjectileId = 0;
+    private var nextProjectileId = 0;
 
-    /*
-    on creation of a local projectile, store it in Game, tell client to tell server to create a new projectile for
-    everyone else. server will reply to just this client with a ProjectileID, which will give the projectile id and server ip.
-    server will send CreateProjectile to everyone else. if LocalProjectile wants to remove itself, it will all itself to the removal queue
-    so that game can attempt to retrieve the global id and use it to send a request to server to remove it.
-    after it successfully sends that, it can remove the local copy.
-
-    nvm about the removal queue. just mark it for removal with a boolean
-     */
-
-    var wPressed = false
-    var aPressed = false
-    var sPressed = false
-    var dPressed = false
+    private var wPressed = false
+    private var aPressed = false
+    private var sPressed = false
+    private var dPressed = false
 
     fun keyPressed(key: Char) {
         when (key.toLowerCase()) {
@@ -96,7 +86,7 @@ class Game {
             // try to remove projectiles that were marked for removal
             val pToRemove = mutableListOf<LocalProjectile>()
             for (p in clientProjectiles) {
-                if (p.markedForRemoval && p.id >= 0) {
+                if (!p.alive() && p.id >= 0) {
                     if (p.asteroidCollided == null) {
                         gameClient.client.sendTCP(RequestRemoveProjectile(p.id))
                     } else {
@@ -149,7 +139,7 @@ class Game {
             graphics.stroke(255f)
             graphics.fill(255f)
             graphics.textAlign(CENTER, TOP)
-            graphics.textSize(24f)
+            graphics.textSize(20f)
             graphics.text("SCORE $score", MainApp.screenWidth / 2f, 0f)
         }
     }

@@ -30,6 +30,8 @@ class LocalProjectile(x: Float, y: Float, baseXSpeed: Float, baseYSpeed: Float, 
         }
     }
 
+    override fun alive() : Boolean = super.alive() && !markedForRemoval
+
     override fun draw(graphics: PApplet) {
         if (!markedForRemoval)
             super.draw(graphics)
