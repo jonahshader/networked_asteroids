@@ -76,6 +76,14 @@ class Game {
             if (xKeyboard != 0 || yKeyboard != 0)
                 clientPlayer!!.turn(-xKeyboard, dt)
             clientPlayer!!.accelerating = yKeyboard > 0
+
+            // check if the client player got hit by an asteroid
+            for (a in Engine.asteroids) {
+                if (a.checkCollision(clientPlayer!!)) {
+                    //TODO: send death notification to server
+                    clientPlayer!!.alive = false
+                }
+            }
         }
 
         // Run local projectiles
@@ -99,7 +107,6 @@ class Game {
             clientProjectiles.removeAll(pToRemove)
             pToRemove.clear()
         }
-
 
         // Run other projectiles
         for (i in Engine.projectiles.indices)

@@ -101,6 +101,15 @@ class GameServer {
                         }
                     }
 
+                    is PlayerLife -> {
+                        val player = Engine.idToObject[`object`.id]
+                        if (player != null) {
+                            if (player is Player) {
+                                player.alive = `object`.alive
+                            }
+                        }
+                        server.sendToAllExceptTCP(connection!!.id, `object`)
+                    }
                 }
             }
         })

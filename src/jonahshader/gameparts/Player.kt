@@ -1,5 +1,6 @@
 package jonahshader.gameparts
 
+import jonahshader.Engine
 import jonahshader.client.MainApp
 import jonahshader.networking.packets.AddPlayer
 import jonahshader.networking.packets.UpdatePlayer
@@ -14,6 +15,8 @@ class Player(x: Float, y: Float, xSpeed: Float, ySpeed: Float, var accelerating:
     val playerAccelerationMultiplier = 90f
     val playerTurnRate = (PI * 2f).toFloat()
 
+    var alive = true
+
     var r = 0f
     var g = 0f
     var b = 255f
@@ -26,7 +29,6 @@ class Player(x: Float, y: Float, xSpeed: Float, ySpeed: Float, var accelerating:
             b = 0f
         }
     }
-    constructor(playerInfo: UpdatePlayer) : this(playerInfo.x, playerInfo.y, playerInfo.xSpeed, playerInfo.ySpeed, playerInfo.accelerating, playerInfo.direction, playerInfo.id)
 
     fun updatePlayer(info: UpdatePlayer) {
         this.x = info.x
@@ -38,38 +40,45 @@ class Player(x: Float, y: Float, xSpeed: Float, ySpeed: Float, var accelerating:
     }
 
     override fun run(dt: Float) {
-        if (accelerating) {
-            xSpeed += cos(direction) * playerAccelerationMultiplier * dt
-            ySpeed += sin(direction) * playerAccelerationMultiplier * dt
+        if (alive) {
+            if (accelerating) {
+                xSpeed += cos(direction) * playerAccelerationMultiplier * dt
+                ySpeed += sin(direction) * playerAccelerationMultiplier * dt
+            }
+            super.run(dt)
+
+            // Keep player in bounds
+            x %= MainApp.screenWidth
+            y %= MainApp.screenHeight
+
+            if (x < 0) x += MainApp.screenWidth
+            if (y < 0) y += MainApp.screenHeight
         }
-        super.run(dt)
-
-        // Keep player in bounds
-        x %= MainApp.screenWidth
-        y %= MainApp.screenHeight
-
-        if (x < 0) x += MainApp.screenWidth
-        if (y < 0) y += MainApp.screenHeight
     }
 
     fun turn(polarity: Int, dt: Float) {
-        direction -= polarity * playerTurnRate * dt
+        if (alive) {
+            direction -= polarity * playerTurnRate * dt
+        }
     }
 
     fun applyForce(direction: Float, magnitude: Float) {
-        xSpeed += cos(direction) * magnitude
-        ySpeed += sin(direction) * magnitude
+        if (alive) {
+            xSpeed += cos(direction) * magnitude
+            ySpeed += sin(direction) * magnitude
+        }
     }
 
     fun draw(graphics: PApplet) {
-        graphics.stroke(r, g, b)
-        graphics.fill(255f, 255f, 255f)
-        graphics.strokeWeight(1f)
-        graphics.ellipseMode(PConstants.CENTER)
-        graphics.ellipse(x, y, diameter, diameter)
-        graphics.line(x, y,
-            x + cos(direction) * diameter,
-            y + sin(direction) * diameter)
+        if (alive) {
+            graphics.stroke(r, g, b)
+            graphics.fill(255f, 255f, 255f)
+            graphics.strokeWeight(1f)
+            graphics.ellipseMode(PConstants.CENTER)
+            graphics.ellipse(x, y, diameter, diameter)
+            graphics.line(x, y,
+                x + cos(direction) * diameter,
+                y + sin(direction) * diameter)
+        }
     }
-
 }
