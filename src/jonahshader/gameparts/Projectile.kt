@@ -4,8 +4,8 @@ import processing.core.PApplet
 import kotlin.math.cos
 import kotlin.math.sin
 
-open class Projectile(var x: Float, var y: Float, var direction: Float, id: Int) : NetworkedObject(id) {
-    private val speed = 200f // pixels per second
+open class Projectile(var x: Float, var y: Float, var baseXSpeed: Float, var baseYSpeed: Float, var direction: Float, id: Int) : NetworkedObject(id) {
+    private val speed = 210f // pixels per second
     val length = 14f // pixels
 
     private val xSpeedScale = cos(direction)
@@ -15,8 +15,8 @@ open class Projectile(var x: Float, var y: Float, var direction: Float, id: Int)
     var yEnd = y + ySpeedScale * length
 
     override fun run(dt: Float) {
-        x += xSpeedScale * speed * dt
-        y += ySpeedScale * speed * dt
+        x += (xSpeedScale * speed + baseXSpeed) * dt
+        y += (ySpeedScale * speed + baseYSpeed) * dt
 
         xEnd = x + xSpeedScale * length
         yEnd = y + ySpeedScale * length

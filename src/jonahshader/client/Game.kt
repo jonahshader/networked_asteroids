@@ -53,9 +53,9 @@ class Game {
                     // if clientPlayer exists,
                     if (clientPlayer != null) {
                         // create a local projectile in clientProjectiles
-                        clientProjectiles.add(LocalProjectile(clientPlayer!!.x, clientPlayer!!.y, clientPlayer!!.direction, nextProjectileId, -1))
+                        clientProjectiles.add(LocalProjectile(clientPlayer!!.x, clientPlayer!!.y, clientPlayer!!.xSpeed, clientPlayer!!.ySpeed, clientPlayer!!.direction, nextProjectileId, -1))
                         // also send a request to create one on the server so that other clients can see it
-                        gameClient.client.sendTCP(RequestCreateProjectile(clientPlayer!!.x, clientPlayer!!.y, clientPlayer!!.direction, nextProjectileId))
+                        gameClient.client.sendTCP(RequestCreateProjectile(clientPlayer!!.x, clientPlayer!!.y, clientPlayer!!.xSpeed, clientPlayer!!.ySpeed, clientPlayer!!.direction, nextProjectileId))
                         nextProjectileId++
                     }
                 }

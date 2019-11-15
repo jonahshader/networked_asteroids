@@ -12,7 +12,7 @@ import kotlin.math.sin
 /**
  * local projectile performs collision detection and only runs on clients
  */
-class LocalProjectile(x: Float, y: Float, direction: Float, val localId: Int, id: Int) : Projectile(x, y, direction, id) {
+class LocalProjectile(x: Float, y: Float, baseXSpeed: Float, baseYSpeed: Float, direction: Float, val localId: Int, id: Int) : Projectile(x, y, baseXSpeed, baseYSpeed, direction, id) {
     var markedForRemoval = false
     var asteroidCollided: Asteroid? = null
 

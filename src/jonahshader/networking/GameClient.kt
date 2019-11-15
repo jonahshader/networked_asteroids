@@ -43,7 +43,7 @@ class GameClient(val game: Game) {
                                 localp.id = `object`.id
                         }
                     }
-                    is AddProjectile -> Engine.queueAddObject(Projectile(`object`.x, `object`.y, `object`.direction, `object`.id))
+                    is AddProjectile -> Engine.queueAddObject(Projectile(`object`.x, `object`.y, `object`.baseXSpeed, `object`.baseYSpeed,`object`.direction, `object`.id))
                     is UpdateScore -> game.score = `object`.score
                 }
             }

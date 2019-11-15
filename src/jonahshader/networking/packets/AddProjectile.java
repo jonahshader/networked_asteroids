@@ -5,12 +5,14 @@ package jonahshader.networking.packets;
  */
 public class AddProjectile {
     public int id;
-    public float x, y, direction;
+    public float x, y, baseXSpeed, baseYSpeed, direction;
 
-    public AddProjectile(float x, float y, float direction, int id) {
+    public AddProjectile(float x, float y, float baseXSpeed, float baseYSpeed, float direction, int id) {
         this.id = id;
         this.x = x;
         this.y = y;
+        this.baseXSpeed = baseXSpeed;
+        this.baseYSpeed = baseYSpeed;
         this.direction = direction;
     }
 

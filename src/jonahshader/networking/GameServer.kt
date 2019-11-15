@@ -58,7 +58,7 @@ class GameServer {
 
                         // send all projectiles
                         for (projectile in Engine.projectiles) {
-                            connection.sendTCP(AddProjectile(projectile.x, projectile.y, projectile.direction, projectile.id))
+                            connection.sendTCP(AddProjectile(projectile.x, projectile.y, projectile.baseXSpeed, projectile.baseYSpeed, projectile.direction, projectile.id))
                         }
                     }
 
@@ -72,9 +72,9 @@ class GameServer {
                         val id = Engine.nextId
                         connection!!.sendTCP(ProjectileIDReply(id, `object`.localId))
                         server.sendToAllExceptTCP(connection.id,
-                            AddProjectile(`object`.x, `object`.y, `object`.direction, id)
+                            AddProjectile(`object`.x, `object`.y, `object`.baseXSpeed, `object`.baseYSpeed, `object`.direction, id)
                         )
-                        Engine.addObject(Projectile(`object`.x, `object`.y, `object`.direction, id))
+                        Engine.addObject(Projectile(`object`.x, `object`.y, `object`.baseXSpeed, `object`.baseYSpeed, `object`.direction, id))
                     }
 
                     is RequestRemoveProjectile -> {
