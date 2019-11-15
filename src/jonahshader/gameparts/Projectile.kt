@@ -5,8 +5,8 @@ import kotlin.math.cos
 import kotlin.math.sin
 
 open class Projectile(var x: Float, var y: Float, var direction: Float, id: Int) : NetworkedObject(id) {
-    private val speed = 20f // pixels per second
-    val length = 8f // pixels
+    private val speed = 200f // pixels per second
+    val length = 14f // pixels
 
     private val xSpeedScale = cos(direction)
     private val ySpeedScale = sin(direction)

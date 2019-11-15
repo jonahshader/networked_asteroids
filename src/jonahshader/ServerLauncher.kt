@@ -23,9 +23,15 @@ fun main() {
             for (i in Engine.asteroids.indices)
                 Engine.asteroids[i].run(deltaTime)
 
+            // run game logic for projectiles
+            for (i in Engine.projectiles.indices) {
+                Engine.projectiles[i].run(deltaTime)
+            }
+
             time += deltaTime
         }
 
+        Engine.updateEngine()
 
         Thread.sleep(3) // sleep a lil
         val currentTime = System.nanoTime()

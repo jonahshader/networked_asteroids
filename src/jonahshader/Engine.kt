@@ -9,7 +9,7 @@ import java.util.*
 import kotlin.collections.HashMap
 
 object Engine{
-    private val idToObject = HashMap<Int, NetworkedObject>()
+    val idToObject = HashMap<Int, NetworkedObject>()
     val asteroids = Vector<Asteroid>()
     val players = Vector<Player>()
     val projectiles = Vector<Projectile>()
@@ -21,7 +21,8 @@ object Engine{
 
     fun queueRemoveObject(id: Int) {
         val objToRemove = idToObject[id]
-        objRemoveQueue.add(objToRemove)
+        if (objToRemove != null)
+            objRemoveQueue.add(objToRemove)
     }
 
     fun queueAddObject(obj: NetworkedObject) {
@@ -98,7 +99,8 @@ object Engine{
             asteroids.remove(obj)
             players.remove(obj)
             projectiles.remove(obj)
-            idToObject.remove(obj.id)
+            if (idToObject.containsKey(obj.id))
+                idToObject.remove(obj.id)
         }
         objRemoveQueue.clear()
     }

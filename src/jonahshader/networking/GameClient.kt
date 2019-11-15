@@ -42,7 +42,6 @@ class GameClient(val game: Game) {
                             if (localp.localId == `object`.localId)
                                 localp.id = `object`.id
                         }
-                        game.localIdToId[`object`.localId] = `object`.id
                     }
                     is AddProjectile -> Engine.queueAddObject(Projectile(`object`.x, `object`.y, `object`.direction, `object`.id))
                 }

@@ -6,6 +6,7 @@ import com.esotericsoftware.kryonet.Server
 import jonahshader.Engine
 import jonahshader.gameparts.Player
 import jonahshader.client.MainApp
+import jonahshader.gameparts.Asteroid
 import jonahshader.gameparts.Projectile
 import jonahshader.networking.packets.*
 import java.lang.Math.random
@@ -67,6 +68,27 @@ class GameServer {
                             AddProjectile(`object`.x, `object`.y, `object`.direction, id)
                         )
                         Engine.addObject(Projectile(`object`.x, `object`.y, `object`.direction, id))
+                    }
+
+                    is RequestRemoveProjectile -> {
+                        if (Engine.idToObject[`object`.id] is Projectile) {
+                            Engine.queueRemoveObject(`object`.id)
+                            server.sendToAllTCP(RemoveObject(`object`.id))
+                        }
+                    }
+
+                    is ReportCollision -> {
+                        val asteroidCollided = Engine.idToObject[`object`.asteroidId]
+                        val ownerPlayer = Engine.idToObject[`object`.playerId]
+                        val projectile = Engine.idToObject[`object`.projectileId]
+
+                        if (asteroidCollided is Asteroid && ownerPlayer is Player && projectile is Projectile) {
+                            // for now, just remove asteroid and projectile
+                            Engine.queueRemoveObject(asteroidCollided.id)
+                            Engine.queueRemoveObject(projectile.id)
+                            server.sendToAllTCP(RemoveObject(asteroidCollided.id))
+                            server.sendToAllTCP(RemoveObject(projectile.id))
+                        }
                     }
                 }
             }

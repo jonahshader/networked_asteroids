@@ -10,9 +10,9 @@ import kotlin.math.cos
 import kotlin.math.sin
 
 class Player(x: Float, y: Float, xSpeed: Float, ySpeed: Float, var accelerating: Boolean, var direction: Float, id: Int) :
-    MovingCircle(x, y, xSpeed, ySpeed, 10.0f, id) {
-    val playerAccelerationMultiplier = 80f
-    val playerTurnRate = (PI * 1.5f).toFloat()
+    MovingCircle(x, y, xSpeed, ySpeed, 12.0f, id) {
+    val playerAccelerationMultiplier = 90f
+    val playerTurnRate = (PI * 2f).toFloat()
 
     var r = 0f
     var g = 0f

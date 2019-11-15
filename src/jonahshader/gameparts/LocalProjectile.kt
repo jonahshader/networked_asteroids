@@ -14,15 +14,17 @@ import kotlin.math.sin
  */
 class LocalProjectile(x: Float, y: Float, direction: Float, val localId: Int, id: Int) : Projectile(x, y, direction, id) {
     var markedForRemoval = false
+    var asteroidCollided: Asteroid? = null
 
     override fun run(dt: Float) {
         if (!markedForRemoval) {
             super.run(dt)
 
-            val asteroidCollided = getCollision()
+            if (x >= MainApp.screenWidth || x < 0 || y >= MainApp.screenHeight || y < 0)
+                markedForRemoval = true
+
+            asteroidCollided = getCollision()
             if (asteroidCollided != null) {
-                // report collision
-                // note: id is incorrect because this was created locally.
                 markedForRemoval = true
             }
         }
