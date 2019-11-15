@@ -20,9 +20,6 @@ class LocalProjectile(x: Float, y: Float, baseXSpeed: Float, baseYSpeed: Float, 
         if (!markedForRemoval) {
             super.run(dt)
 
-            if (x >= MainApp.screenWidth || x < 0 || y >= MainApp.screenHeight || y < 0)
-                markedForRemoval = true
-
             asteroidCollided = getCollision()
             if (asteroidCollided != null) {
                 markedForRemoval = true

@@ -1,5 +1,6 @@
 package jonahshader.gameparts
 
+import jonahshader.client.MainApp
 import processing.core.PApplet
 import kotlin.math.cos
 import kotlin.math.sin
@@ -16,12 +17,21 @@ open class Projectile(var x: Float, var y: Float, var baseXSpeed: Float, var bas
     var yEnd = y + ySpeedScale * length
 
     override fun run(dt: Float) {
+        // calculate new position
         x += (xSpeedScale * speed + baseXSpeed) * dt
         y += (ySpeedScale * speed + baseYSpeed) * dt
 
+        // wrap around
+        x %= MainApp.screenWidth
+        y %= MainApp.screenHeight
+        if (x < 0) x += MainApp.screenWidth
+        if (y < 0) y += MainApp.screenHeight
+
+        // calculate position of other end of the projectile
         xEnd = x + xSpeedScale * length
         yEnd = y + ySpeedScale * length
 
+        // decrement lifespan
         lifespan -= dt
     }
 
