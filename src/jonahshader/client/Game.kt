@@ -9,9 +9,10 @@ import jonahshader.networking.packets.ReportCollision
 import jonahshader.networking.packets.RequestCreateProjectile
 import jonahshader.networking.packets.RequestRemoveProjectile
 import processing.core.PApplet
-import processing.core.PConstants.CENTER
-import processing.core.PConstants.TOP
+import processing.core.PConstants
+import processing.core.PConstants.*
 import java.util.*
+import kotlin.math.PI
 
 class Game {
     private val gameClient = GameClient(this)
@@ -52,6 +53,8 @@ class Game {
                 if (clientProjectiles.size < 3) {
                     // if clientPlayer exists,
                     if (clientPlayer != null) {
+                        // apply backwards force to player
+                        clientPlayer!!.applyForce(clientPlayer!!.direction + PConstants.PI, 5f)
                         // create a local projectile in clientProjectiles
                         clientProjectiles.add(LocalProjectile(clientPlayer!!.x, clientPlayer!!.y, clientPlayer!!.xSpeed, clientPlayer!!.ySpeed, clientPlayer!!.direction, nextProjectileId, -1))
                         // also send a request to create one on the server so that other clients can see it

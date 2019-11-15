@@ -56,6 +56,11 @@ class Player(x: Float, y: Float, xSpeed: Float, ySpeed: Float, var accelerating:
         direction -= polarity * playerTurnRate * dt
     }
 
+    fun applyForce(direction: Float, magnitude: Float) {
+        xSpeed += cos(direction) * magnitude
+        ySpeed += sin(direction) * magnitude
+    }
+
     fun draw(graphics: PApplet) {
         graphics.stroke(r, g, b)
         graphics.fill(255f, 255f, 255f)
