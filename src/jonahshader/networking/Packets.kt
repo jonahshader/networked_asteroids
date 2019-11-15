@@ -20,4 +20,5 @@ fun registerPackets(kryo: Kryo) {
     kryo.register(ProjectileIDReply::class.java)
     kryo.register(ReportCollision::class.java)
     kryo.register(RequestRemoveProjectile::class.java)
+    kryo.register(UpdateScore::class.java)
 }

@@ -9,10 +9,13 @@ import jonahshader.networking.packets.ReportCollision
 import jonahshader.networking.packets.RequestCreateProjectile
 import jonahshader.networking.packets.RequestRemoveProjectile
 import processing.core.PApplet
+import processing.core.PConstants.CENTER
+import processing.core.PConstants.TOP
 import java.util.*
 
 class Game {
     private val gameClient = GameClient(this)
+    var score = 0
 
     init {
         gameClient.start()
@@ -137,5 +140,14 @@ class Game {
         // Draw players
         for (i in Engine.players.indices)
             Engine.players[i].draw(graphics)
+
+        // draw score
+        if (score > 0) {
+            graphics.stroke(255f)
+            graphics.fill(255f)
+            graphics.textAlign(CENTER, TOP)
+            graphics.textSize(24f)
+            graphics.text("SCORE $score", MainApp.screenWidth / 2f, 0f)
+        }
     }
 }

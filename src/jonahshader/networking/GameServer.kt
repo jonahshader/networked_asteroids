@@ -18,6 +18,8 @@ class GameServer {
     val playersConnected: Int
     get() = server.connections.size
 
+    var score = 0
+
     fun start() {
         registerPackets(server.kryo)
         server.start()
@@ -52,6 +54,11 @@ class GameServer {
                         // send all asteroids
                         for (asteroid in Engine.asteroids) {
                             connection.sendTCP(makeAddAsteroidFromAsteroid(asteroid))
+                        }
+
+                        // send all projectiles
+                        for (projectile in Engine.projectiles) {
+                            connection.sendTCP(AddProjectile(projectile.x, projectile.y, projectile.direction, projectile.id))
                         }
                     }
 
@@ -88,8 +95,12 @@ class GameServer {
                             Engine.queueRemoveObject(projectile.id)
                             server.sendToAllTCP(RemoveObject(asteroidCollided.id))
                             server.sendToAllTCP(RemoveObject(projectile.id))
+
+                            score++ // increment score by one, for now
+                            server.sendToAllTCP(UpdateScore(score))
                         }
                     }
+
                 }
             }
         })
