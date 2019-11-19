@@ -2,8 +2,8 @@ package jonahshader.client
 
 import processing.core.PApplet
 
-class GameScreen : Screen {
-    private val game = Game()
+class GameScreen(ip: String, port: Int) : Screen {
+    private val game = Game(ip, port)
 
     override fun draw(dt: Float, graphics: PApplet) {
         game.run(dt)

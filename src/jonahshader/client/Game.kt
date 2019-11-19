@@ -14,12 +14,12 @@ import processing.core.PConstants.*
 import java.util.*
 import kotlin.math.PI
 
-class Game {
+class Game(ip: String, port: Int) {
     private val gameClient = GameClient(this)
     var score = 0
 
     init {
-        gameClient.start()
+        gameClient.start(ip, port)
     }
 
     var clientPlayer: Player? = null

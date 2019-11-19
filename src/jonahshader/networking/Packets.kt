@@ -22,4 +22,5 @@ fun registerPackets(kryo: Kryo) {
     kryo.register(RequestRemoveProjectile::class.java)
     kryo.register(UpdateScore::class.java)
     kryo.register(PlayerLife::class.java)
+    kryo.register(ResetGame::class.java)
 }

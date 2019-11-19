@@ -104,4 +104,14 @@ object Engine{
         }
         objRemoveQueue.clear()
     }
+
+    fun reset() {
+        objAddQueue.clear()
+        objRemoveQueue.clear()
+        idToObject.clear()
+
+        asteroids.clear()
+        players.clear()
+        projectiles.clear()
+    }
 }

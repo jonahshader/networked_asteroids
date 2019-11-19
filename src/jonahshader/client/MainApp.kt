@@ -2,14 +2,13 @@ package jonahshader.client
 
 import processing.core.PApplet
 
-class MainApp : PApplet() {
+class MainApp(ip: String, port: Int) : PApplet() {
     companion object {
         val screenWidth = 1280 / 3
         val screenHeight = 720 / 3
     }
 
-
-    var screen: Screen? = GameScreen()
+    var screen: Screen? = GameScreen(ip, port)
     var deltaTime = 1/60.0f
     var previousTimeNanos = System.nanoTime()
 

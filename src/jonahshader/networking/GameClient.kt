@@ -18,10 +18,10 @@ class GameClient(val game: Game) {
 
     val client = Client() // kryonet client network component
 
-    fun start() {
+    fun start(ip: String, port: Int) {
         registerPackets(client.kryo)
         client.start()
-        client.connect(6000, JOptionPane.showInputDialog(JFrame(), "Enter IP:"), JOptionPane.showInputDialog(JFrame(), "Enter Port:").toInt())
+        client.connect(6000, ip, port)
 
         client.addListener(object : Listener() {
             override fun received(connection: Connection?, `object`: Any?) {
@@ -61,6 +61,12 @@ class GameClient(val game: Game) {
 //                            }
 //                        }
 //                    }
+                    // ResetGame is called when a game match has ended, and the server is preparing to start another.
+                    is ResetGame -> {
+                        Engine.reset()
+                        game.clientPlayer = null
+                        game.score = 0
+                    }
                 }
             }
         })

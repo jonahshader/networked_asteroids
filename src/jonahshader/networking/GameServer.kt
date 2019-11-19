@@ -4,6 +4,7 @@ import com.esotericsoftware.kryonet.Connection
 import com.esotericsoftware.kryonet.Listener
 import com.esotericsoftware.kryonet.Server
 import jonahshader.Engine
+import jonahshader.ServerGameLogic
 import jonahshader.gameparts.Player
 import jonahshader.client.MainApp
 import jonahshader.gameparts.Asteroid
@@ -20,10 +21,10 @@ class GameServer {
 
     var score = 0
 
-    fun start() {
+    fun start(port: Int) {
         registerPackets(server.kryo)
         server.start()
-        server.bind(JOptionPane.showInputDialog(JFrame(), "Enter Port:").toInt())
+        server.bind(port)
 
         server.addListener(object : Listener() {
             override fun received(connection: Connection?, `object`: Any?) {
@@ -113,6 +114,9 @@ class GameServer {
                 }
             }
         })
+
+        val logic = ServerGameLogic(this)
+        logic.start()
     }
 
     private fun createNewPlayer(playerInfo: AddPlayer) : Player {
