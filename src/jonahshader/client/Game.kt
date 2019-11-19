@@ -39,17 +39,20 @@ class Game {
             's' -> sPressed = true
             'd' -> dPressed = true
             ' ' -> {
-                // limit the number of projectiles that can be created
-                if (clientProjectiles.size < 3) {
-                    // if clientPlayer exists,
-                    if (clientPlayer != null) {
-                        // apply backwards force to player
-                        clientPlayer!!.applyForce(clientPlayer!!.direction + PConstants.PI, 5f)
-                        // create a local projectile in clientProjectiles
-                        clientProjectiles.add(LocalProjectile(clientPlayer!!.x, clientPlayer!!.y, clientPlayer!!.xSpeed, clientPlayer!!.ySpeed, clientPlayer!!.direction, nextProjectileId, -1))
-                        // also send a request to create one on the server so that other clients can see it
-                        gameClient.client.sendTCP(RequestCreateProjectile(clientPlayer!!.x, clientPlayer!!.y, clientPlayer!!.xSpeed, clientPlayer!!.ySpeed, clientPlayer!!.direction, nextProjectileId))
-                        nextProjectileId++
+                // if clientPlayer exists,
+                if (clientPlayer != null) {
+                    // if the clientplayer is alive,
+                    if (clientPlayer!!.alive) {
+                        // if theres less than 4 projectiles created
+                        if (clientProjectiles.size < 4) {
+                            // apply backwards force to player
+                            clientPlayer!!.applyForce(clientPlayer!!.direction + PConstants.PI, 5f)
+                            // create a local projectile in clientProjectiles
+                            clientProjectiles.add(LocalProjectile(clientPlayer!!.x, clientPlayer!!.y, clientPlayer!!.xSpeed, clientPlayer!!.ySpeed, clientPlayer!!.direction, nextProjectileId, -1))
+                            // also send a request to create one on the server so that other clients can see it
+                            gameClient.client.sendTCP(RequestCreateProjectile(clientPlayer!!.x, clientPlayer!!.y, clientPlayer!!.xSpeed, clientPlayer!!.ySpeed, clientPlayer!!.direction, nextProjectileId))
+                            nextProjectileId++
+                        }
                     }
                 }
             }
@@ -80,7 +83,6 @@ class Game {
             // check if the client player got hit by an asteroid
             for (a in Engine.asteroids) {
                 if (a.checkCollision(clientPlayer!!)) {
-                    //TODO: send death notification to server
                     clientPlayer!!.alive = false
                 }
             }

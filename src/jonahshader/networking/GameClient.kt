@@ -45,21 +45,22 @@ class GameClient(val game: Game) {
                     }
                     is AddProjectile -> Engine.queueAddObject(Projectile(`object`.x, `object`.y, `object`.baseXSpeed, `object`.baseYSpeed,`object`.direction, `object`.id))
                     is UpdateScore -> game.score = `object`.score
-                    is PlayerLife -> {
-                        val id = `object`.id
-                        if (game.clientPlayer != null) {
-                            if (game.clientPlayer!!.id == id) {
-                                // update client player
-                                game.clientPlayer!!.alive = `object`.alive
-                            }
-                        }
-                        val player = Engine.idToObject[id]
-                        if (player != null) {
-                            if (player is Player) {
-                                player.alive = `object`.alive
-                            }
-                        }
-                    }
+                    //TODO: idk if this code needs to be here lol. gotta think about this a little more.
+//                    is PlayerLife -> {
+//                        val id = `object`.id
+//                        if (game.clientPlayer != null) {
+//                            if (game.clientPlayer!!.id == id) {
+//                                // update client player
+//                                game.clientPlayer!!.alive = `object`.alive
+//                            }
+//                        }
+//                        val player = Engine.idToObject[id]
+//                        if (player != null) {
+//                            if (player is Player) {
+//                                player.alive = `object`.alive
+//                            }
+//                        }
+//                    }
                 }
             }
         })

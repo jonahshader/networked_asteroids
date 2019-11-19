@@ -34,8 +34,8 @@ class GameServer {
                         val newY = MainApp.screenHeight * random().toFloat()
 
                         // send new player to clients. only the caller gets ownership.
-                        val playerInfoNotForClient = AddPlayer(newX, newY, 0f, 0f, 0f, Engine.nextId, false, false)
-                        val playerInfoForClient = AddPlayer(newX, newY, 0f, 0f, 0f, Engine.nextId, false, true)
+                        val playerInfoNotForClient = AddPlayer(newX, newY, 0f, 0f, 0f, Engine.nextId, false, false, true)
+                        val playerInfoForClient = AddPlayer(newX, newY, 0f, 0f, 0f, Engine.nextId, false, true, true)
                         server.sendToAllExceptTCP(connection!!.id, playerInfoNotForClient)
                         connection.sendTCP(playerInfoForClient)
 
@@ -100,16 +100,16 @@ class GameServer {
                             server.sendToAllTCP(UpdateScore(score))
                         }
                     }
-
-                    is PlayerLife -> {
-                        val player = Engine.idToObject[`object`.id]
-                        if (player != null) {
-                            if (player is Player) {
-                                player.alive = `object`.alive
-                            }
-                        }
-                        server.sendToAllExceptTCP(connection!!.id, `object`)
-                    }
+                    // TODO: this code might be used if pvp is added in the future
+//                    is PlayerLife -> {
+//                        val player = Engine.idToObject[`object`.id]
+//                        if (player != null) {
+//                            if (player is Player) {
+//                                player.alive = `object`.alive
+//                            }
+//                        }
+//                        server.sendToAllExceptTCP(connection!!.id, `object`)
+//                    }
                 }
             }
         })

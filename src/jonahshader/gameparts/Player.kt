@@ -12,8 +12,8 @@ import kotlin.math.sin
 
 class Player(x: Float, y: Float, xSpeed: Float, ySpeed: Float, var accelerating: Boolean, var direction: Float, id: Int) :
     MovingCircle(x, y, xSpeed, ySpeed, 12.0f, id) {
-    val playerAccelerationMultiplier = 90f
-    val playerTurnRate = (PI * 2f).toFloat()
+    private val playerAccelerationMultiplier = 90f
+    private val playerTurnRate = (PI * 2f).toFloat()
 
     var alive = true
 
@@ -28,6 +28,8 @@ class Player(x: Float, y: Float, xSpeed: Float, ySpeed: Float, var accelerating:
             g = 0f
             b = 0f
         }
+
+        alive = playerInfo.alive
     }
 
     fun updatePlayer(info: UpdatePlayer) {
@@ -37,6 +39,7 @@ class Player(x: Float, y: Float, xSpeed: Float, ySpeed: Float, var accelerating:
         this.ySpeed = info.ySpeed
         this.direction = info.direction
         this.accelerating = info.accelerating
+        this.alive = info.alive
     }
 
     override fun run(dt: Float) {
