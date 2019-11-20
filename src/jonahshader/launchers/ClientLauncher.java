@@ -1,4 +1,4 @@
-package jonahshader;
+package jonahshader.launchers;
 
 import jonahshader.client.MainApp;
 import processing.core.PApplet;

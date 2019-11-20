@@ -1,4 +1,4 @@
-package jonahshader
+package jonahshader.launchers
 
 import jonahshader.networking.GameServer
 import javax.swing.JFrame

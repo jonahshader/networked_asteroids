@@ -9,8 +9,6 @@ import jonahshader.gameparts.Player
 import jonahshader.client.Game
 import jonahshader.gameparts.Projectile
 import jonahshader.networking.packets.*
-import javax.swing.JFrame
-import javax.swing.JOptionPane
 import kotlin.concurrent.thread
 
 class GameClient(val game: Game) {
@@ -63,10 +61,11 @@ class GameClient(val game: Game) {
 //                    }
                     // ResetGame is called when a game match has ended, and the server is preparing to start another.
                     is ResetGame -> {
-                        Engine.reset()
+                        Engine.queueReset()
                         game.clientPlayer = null
                         game.score = 0
                     }
+                    is TimeTillStart -> game.timeTillStart = `object`.timeTillStart
                 }
             }
         })

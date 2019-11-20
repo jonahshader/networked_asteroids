@@ -15,6 +15,7 @@ import java.util.*
 import kotlin.math.PI
 
 class Game(ip: String, port: Int) {
+    var timeTillStart: Float = 30f
     private val gameClient = GameClient(this)
     var score = 0
 
@@ -118,6 +119,9 @@ class Game(ip: String, port: Int) {
         // Run asteroids
         for (i in Engine.asteroids.indices)
             Engine.asteroids[i].run(dt)
+
+        // decrement timeTillStart
+        timeTillStart -= dt
     }
 
     fun draw(graphics: PApplet) {
@@ -147,6 +151,12 @@ class Game(ip: String, port: Int) {
             graphics.textAlign(CENTER, TOP)
             graphics.textSize(20f)
             graphics.text("SCORE $score", MainApp.screenWidth / 2f, 0f)
+        } else if (timeTillStart > 0) {
+            graphics.stroke(255f)
+            graphics.fill(255f)
+            graphics.textAlign(CENTER, TOP)
+            graphics.textSize(20f)
+            graphics.text("STARTING IN: ${timeTillStart.toInt()}", MainApp.screenWidth / 2f, 0f)
         }
     }
 }

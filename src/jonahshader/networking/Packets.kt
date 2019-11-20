@@ -23,4 +23,5 @@ fun registerPackets(kryo: Kryo) {
     kryo.register(UpdateScore::class.java)
     kryo.register(PlayerLife::class.java)
     kryo.register(ResetGame::class.java)
+    kryo.register(TimeTillStart::class.java)
 }

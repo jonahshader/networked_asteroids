@@ -9,6 +9,7 @@ import java.util.*
 import kotlin.collections.HashMap
 
 object Engine{
+    private var resetQueued = false
     val idToObject = HashMap<Int, NetworkedObject>()
     val asteroids = Vector<Asteroid>()
     val players = Vector<Player>()
@@ -85,6 +86,8 @@ object Engine{
      * should be called by Game before the engine is used. updates the add and remove queues
      */
     fun updateEngine() {
+        updateReset()
+
         for (obj in objAddQueue) {
             when (obj) {
                 is Player -> players.add(obj)
@@ -105,13 +108,23 @@ object Engine{
         objRemoveQueue.clear()
     }
 
-    fun reset() {
-        objAddQueue.clear()
-        objRemoveQueue.clear()
-        idToObject.clear()
+    fun queueReset() {
+        resetQueued = true
+    }
 
-        asteroids.clear()
-        players.clear()
-        projectiles.clear()
+    private fun updateReset() {
+        if (resetQueued) {
+            objAddQueue.clear()
+            objRemoveQueue.clear()
+            idToObject.clear()
+
+            asteroids.clear()
+            players.clear()
+            projectiles.clear()
+
+            nextId = 0
+        }
+
+        resetQueued = false
     }
 }

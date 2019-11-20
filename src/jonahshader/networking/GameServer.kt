@@ -11,18 +11,19 @@ import jonahshader.gameparts.Asteroid
 import jonahshader.gameparts.Projectile
 import jonahshader.networking.packets.*
 import java.lang.Math.random
-import javax.swing.JFrame
-import javax.swing.JOptionPane
 
 class GameServer {
     val server = Server()
     val playersConnected: Int
     get() = server.connections.size
 
+    private val logic = ServerGameLogic(this)
+
     var score = 0
 
     fun start(port: Int) {
         registerPackets(server.kryo)
+        println("Starting server on port $port")
         server.start()
         server.bind(port)
 
@@ -30,37 +31,7 @@ class GameServer {
             override fun received(connection: Connection?, `object`: Any?) {
                 when (`object`) {
                     is NewConnection -> {
-                        // create new player
-                        val newX = MainApp.screenWidth * random().toFloat()
-                        val newY = MainApp.screenHeight * random().toFloat()
-
-                        // send new player to clients. only the caller gets ownership.
-                        val playerInfoNotForClient = AddPlayer(newX, newY, 0f, 0f, 0f, Engine.nextId, false, false, true)
-                        val playerInfoForClient = AddPlayer(newX, newY, 0f, 0f, 0f, Engine.nextId, false, true, true)
-                        server.sendToAllExceptTCP(connection!!.id, playerInfoNotForClient)
-                        connection.sendTCP(playerInfoForClient)
-
-                        // add new player to engine
-                        createNewPlayer(playerInfoNotForClient)
-
-                        // send all players
-                        for (player in Engine.players) {
-                            // if this player isn't the new one we just created for the new client,
-                            if (player.id != playerInfoNotForClient.id) {
-                                // send it
-                                connection.sendTCP(makeAddPlayerFromPlayer(player))
-                            }
-                        }
-
-                        // send all asteroids
-                        for (asteroid in Engine.asteroids) {
-                            connection.sendTCP(makeAddAsteroidFromAsteroid(asteroid))
-                        }
-
-                        // send all projectiles
-                        for (projectile in Engine.projectiles) {
-                            connection.sendTCP(AddProjectile(projectile.x, projectile.y, projectile.baseXSpeed, projectile.baseYSpeed, projectile.direction, projectile.id))
-                        }
+                        connection?.let { transferNewPlayerAndEverythingElse(it) }
                     }
 
                     is UpdatePlayer -> {
@@ -115,7 +86,7 @@ class GameServer {
             }
         })
 
-        val logic = ServerGameLogic(this)
+
         logic.start()
     }
 
@@ -123,5 +94,55 @@ class GameServer {
         val newPlayer = Player(playerInfo)
         Engine.addObject(newPlayer)
         return newPlayer
+    }
+
+    fun reset() {
+        score = 0
+        server.sendToAllTCP(ResetGame())
+        Thread.sleep(100) // sleep a little to make sure clients handle the reset command properly
+        for (c in server.connections) {
+            if (c != null)
+                transferNewPlayerAndEverythingElse(c)
+        }
+    }
+
+    fun resetNoResendData() {
+        score = 0
+    }
+
+    private fun transferNewPlayerAndEverythingElse(c: Connection) {
+        // create new player
+        val newX = MainApp.screenWidth * random().toFloat()
+        val newY = MainApp.screenHeight * random().toFloat()
+
+        // send new player to clients. only the caller gets ownership.
+        val playerInfoNotForClient = AddPlayer(newX, newY, 0f, 0f, 0f, Engine.nextId, false, false, true)
+        val playerInfoForClient = AddPlayer(newX, newY, 0f, 0f, 0f, Engine.nextId, false, true, true)
+        server.sendToAllExceptTCP(c.id, playerInfoNotForClient)
+        c.sendTCP(playerInfoForClient)
+
+        // add new player to engine
+        createNewPlayer(playerInfoNotForClient)
+
+        // send all players
+        for (player in Engine.players) {
+            // if this player isn't the new one we just created for the new client,
+            if (player.id != playerInfoNotForClient.id) {
+                // send it
+                c.sendTCP(makeAddPlayerFromPlayer(player))
+            }
+        }
+
+        // send all asteroids
+        for (asteroid in Engine.asteroids) {
+            c.sendTCP(makeAddAsteroidFromAsteroid(asteroid))
+        }
+
+        // send all projectiles
+        for (projectile in Engine.projectiles) {
+            c.sendTCP(AddProjectile(projectile.x, projectile.y, projectile.baseXSpeed, projectile.baseYSpeed, projectile.direction, projectile.id))
+        }
+
+        c.sendTCP(TimeTillStart(logic.timeTillGameStart))
     }
 }
